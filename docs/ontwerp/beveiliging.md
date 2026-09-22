@@ -165,7 +165,7 @@ de groep telt alleen mee bij deze paden.
 | Elke pull request | Autorisatietests voor alle routes, architectuurtests (§5), tests die proberen bij data van een ander lid te komen, gitleaks, `pnpm audit`, TypeScript strict en `svelte-check` |
 | Elke preview | Een baseline-scan met **OWASP ZAP** op de preview-URL |
 | Wekelijks | Dependabot-updates en een controle van de beveiligingsheaders |
-| Vóór livegang | Een review tegen de **OWASP ASVS** niveau 2 voor authenticatie, sessies en toegangscontrole; eventueel een externe pentest van een dag |
+| Vóór livegang | Een review door `@phk-com/security` tegen de **OWASP ASVS** niveau 2 voor authenticatie, sessies en toegangscontrole, plus een **pentest door een zeer sterk AI-model** als het platform grotendeels staat (#25): alleen tegen een testomgeving met nepdata, en de bevindingen via private Security Advisories |
 | Doorlopend | `/.well-known/security.txt`, en meldingen van mislukte inlogpogingen en beheeracties in het beveiligingslog |
 
 ---
@@ -191,4 +191,4 @@ de groep telt alleen mee bij deze paden.
 3. **Het vier-ogen-principe voor gevoelige acties** (§5)? *(advies: ja)*
 4. ~~Een groep `@phk-com/security`?~~ **Besloten (#3):** markclausing, RobertTeunissen en wous2house.
 5. **De oude dump en de oude sitebestanden:** verwijderen, of versleuteld offline archiveren?
-6. **Een externe pentest vóór livegang:** wel of niet? *(ongeveer een dag werk, optioneel)*
+6. ~~Een externe pentest vóór livegang?~~ **Besloten (#5):** een pentest door een zeer sterk AI-model zodra het platform grotendeels staat (#25), en daarna opnieuw bij grote wijzigingen.
