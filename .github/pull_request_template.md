@@ -4,7 +4,7 @@ Zie AGENTS.md §3. Zet een punt dat niet van toepassing is op "n.v.t.", in plaat
 -->
 
 ## Waarom
-<!-- Link naar het roadmap-verhaal (E3.2), het issue (#12) of de melding -->
+Closes #<!-- issuenummer; gebruik Refs # als het issue open moet blijven -->
 
 ## Wat
 <!-- Wat er verandert, kort. Screenshot of video bij UI-wijzigingen. -->
@@ -40,6 +40,6 @@ Zie AGENTS.md §3. Zet een punt dat niet van toepassing is op "n.v.t.", in plaat
 - [ ] Terugdraaien naar de vorige image is veilig, of hieronder staat waarom niet
 
 **Documentatie**
-- [ ] `docs/ROADMAP.md`: status bijgewerkt (🔄 of ✅) met een verwijzing naar deze PR
+- [ ] Gekoppeld aan een issue (`Closes #nr`); het issue staat op het bord op 👀 In review
 - [ ] Ontwerpdocs of `docs/agents/` bijgewerkt bij een concept- of contractwijziging, of n.v.t.
 - [ ] `AGENTS.md` alleen bij een nieuwe vaste werkregel, of n.v.t.

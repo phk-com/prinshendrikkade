@@ -1,0 +1,21 @@
+name: 🗺️ Epic (voor bouwers)
+description: Een groot stuk werk. De taken worden sub-issues.
+title: "E?: "
+labels: ["epic"]
+body:
+  - type: textarea
+    id: doel
+    attributes:
+      label: Doel en waarom
+    validations:
+      required: true
+  - type: textarea
+    id: acceptatie
+    attributes:
+      label: Wanneer is dit epic klaar?
+    validations:
+      required: true
+  - type: textarea
+    id: ontwerp
+    attributes:
+      label: Links naar ontwerp en documentatie

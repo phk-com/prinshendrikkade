@@ -1,0 +1,26 @@
+name: 🛠️ Taak (voor bouwers)
+description: Een concrete, afgebakende taak. Meestal een sub-issue van een epic.
+labels: ["taak"]
+body:
+  - type: textarea
+    id: wat
+    attributes:
+      label: Wat moet er gebeuren?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptatie
+    attributes:
+      label: Acceptatiecriteria
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: input
+    id: epic
+    attributes:
+      label: Hoort bij epic
+      placeholder: "#7"
+  - type: textarea
+    id: notities
+    attributes:
+      label: Technische notities (optioneel)

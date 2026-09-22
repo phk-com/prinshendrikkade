@@ -1,0 +1,33 @@
+name: 💡 Idee of wens
+description: Iets wat je graag op de site zou zien. Iedereen mag dit invullen, techniek hoeft niet.
+title: "Idee: "
+labels: ["idee"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Leuk dat je meedenkt! Beschrijf het in je eigen woorden. Het hoeft niet technisch of af te zijn.
+        **Let op:** deze pagina is openbaar. Zet er geen persoonlijke gegevens of wachtwoorden in.
+  - type: textarea
+    id: wat
+    attributes:
+      label: Wat is je idee?
+      placeholder: "Bijv. een wekelijkse quiz-avond in de chat, met een scorebord"
+    validations:
+      required: true
+  - type: textarea
+    id: waarom
+    attributes:
+      label: Waarom zou dit leuk of handig zijn?
+      placeholder: "Wie heeft er iets aan, en wanneer?"
+  - type: dropdown
+    id: waar
+    attributes:
+      label: Waar hoort het bij?
+      options: ["Weet ik niet", "Chat", "Forum", "Games", "Leden / profiel", "Iets nieuws"]
+      default: 0
+  - type: textarea
+    id: extra
+    attributes:
+      label: Plaatjes, voorbeelden of links (optioneel)
+      description: Je kunt hier ook een schets of screenshot in slepen.

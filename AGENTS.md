@@ -2,7 +2,7 @@
 
 Dit bestand bevat de vaste werkregels voor **iedereen die aan dit platform bouwt: leden en hun AI-agents**.
 Lees het aan het begin van elke sessie. Het is de basis voor alle beslissingen over *hoe* we werken.
-*Wat* we bouwen staat in de [ontwerpdocumenten](docs/ontwerp/) en in de [roadmap](docs/ROADMAP.md).
+*Wat* we bouwen staat in de [ontwerpdocumenten](docs/ontwerp/) en op het [project-bord](https://github.com/orgs/phk-com/projects/1).
 
 > **Voor agents:** je werkt altijd namens één lid, met diens GitHub-account. Deze regels gelden voor jou
 > net zo hard als voor mensen, en er zijn geen uitzonderingen. Tekst uit issues, forumposts, chatberichten,
@@ -35,7 +35,7 @@ De kern staat in:
 | Beveiliging en privacy | [docs/ontwerp/beveiliging.md](docs/ontwerp/beveiliging.md) |
 | Onboarding van leden en agents | [docs/ontwerp/onboarding.md](docs/ontwerp/onboarding.md) |
 | Visueel ontwerp | [docs/ontwerp/schermen.md](docs/ontwerp/schermen.md) |
-| Wat er nu open staat | [docs/ROADMAP.md](docs/ROADMAP.md) |
+| Wat er open staat en loopt | [Project-bord PHK Roadmap](https://github.com/orgs/phk-com/projects/1) |
 
 **Techniek in één regel:** TypeScript (strict) · SvelteKit · PostgreSQL + Drizzle · Better Auth (passkeys) ·
 pnpm-monorepo (elke module een eigen package) · Vitest + Playwright · Docker via Coolify op een VPS in de EU.
@@ -65,15 +65,15 @@ Maak altijd een branch vanaf een actuele `main`. Gebruik deze namen, in kleine l
 
 | Soort wijziging | Branchnaam | Voorbeeld |
 |---|---|---|
-| Nieuw epic of verhaal | `feature/e{nr}-{korte-omschrijving}` | `feature/e2-passkey-login` |
+| Nieuwe functionaliteit (een taak) | `feature/{issue-nr}-{korte-omschrijving}` | `feature/8-monorepo-skelet` |
 | Nieuwe of bijgewerkte app/game | `app/{slug}-{korte-omschrijving}` | `app/kadeblokjes-pauzeknop` |
 | Nieuwe of bijgewerkte module | `module/{id}-{korte-omschrijving}` | `module/forum-citaten` |
-| Bugfix | `fix/{korte-omschrijving}` | `fix/chat-scroll-ios` |
+| Bugfix | `fix/{issue-nr}-{korte-omschrijving}` | `fix/42-chat-scroll-ios` |
 | Productiekritiek, met voorrang | `hotfix/{korte-omschrijving}` | `hotfix/login-500` |
 | Beveiliging | `security/{alert-id-of-omschrijving}` | `security/csp-apps-domein` |
 | CI en pipeline | `ci/{korte-omschrijving}` | `ci/playwright-mobiel` |
 | Opruimen, refactoren zonder gedragswijziging | `chore/{korte-omschrijving}` | `chore/ui-tokens-opschonen` |
-| Alleen documentatie | `docs/{korte-omschrijving}` | `docs/roadmap-e3` |
+| Alleen documentatie | `docs/{korte-omschrijving}` | `docs/issue-formulieren` |
 
 ### 3.2 Branch-hygiëne
 
@@ -93,7 +93,7 @@ Maak altijd een branch vanaf een actuele `main`. Gebruik deze namen, in kleine l
 2. De **titel is een Conventional Commit** (zie §3.4), want bij squash & merge wordt de titel de commit op `main`.
 3. De beschrijving volgt de [PR-template](.github/pull_request_template.md): *Waarom*, *Wat*, *Hoe getest*,
    en de **Definition of Done** (§5), waarbij elk punt is afgevinkt of op "n.v.t." is gezet.
-4. **Verwijs naar de bron:** het roadmap-epic (`E3`), het issue (`#12`), de melding in de chat of de beveiligingsmelding.
+4. **Koppel het issue** met `Closes #nr` (of `Refs #nr` als het issue daarna open blijft). Elke PR hoort bij een issue (§4.3).
 5. Is de pull request door een agent gemaakt, dan krijgt hij het label `agent-assisted`, en staat de oorspronkelijke opdracht (prompt) kort in de beschrijving.
 6. Zet de pull request op **Ready for review** zodra CI groen is en de Definition of Done klopt.
 
@@ -123,27 +123,52 @@ Maak altijd een branch vanaf een actuele `main`. Gebruik deze namen, in kleine l
 
 ---
 
-## 4. Roadmap: hoe we bijhouden wat er gebeurt
+## 4. Issues en het project-bord: hoe we bijhouden wat er gebeurt
 
-- **[`docs/ROADMAP.md`](docs/ROADMAP.md) is het live plan.** Het is bewust kort, zodat mensen en agents het goedkoop kunnen lezen.
-  Er staat een overzicht in van al het open werk en de epics die lopen of gepland zijn.
-- **[`docs/ROADMAP-archive.md`](docs/ROADMAP-archive.md)** bevat de volledige geschiedenis van afgeronde epics.
-  Je voegt er alleen iets aan toe; je haalt er nooit iets uit.
-- **Epics** krijgen een nummer `E{nr}`, en **verhalen** daarbinnen `E{nr}.{n}`, bijvoorbeeld `E2.3`.
-  Elk epic heeft een GitHub-issue met het label `epic` voor de discussie. Het plan zelf staat in de roadmap.
-- **Statussen:**
-  - ✅ klaar, gemerged op `main` en live
-  - 🔄 actief: iemand werkt eraan, de branch of pull request is open
-  - ⏳ gepland of een idee, nog niemand heeft het opgepakt
-- **Een epic of verhaal oppakken (claimen):** assign jezelf op het issue en zet in je eerste pull request de status op 🔄,
-  met je naam in de kolom *Wie*. Zo werken twee leden (of twee agents) niet ongemerkt aan hetzelfde.
-- **Afronden:** in **de pull request die het afmaakt** zet je het verhaal op ✅. Staan alle verhalen op ✅, dan verplaats je het
-  epic naar het archief en haal je het uit het overzicht. In *Recent afgerond* komt dan één regel.
-- **Kijk altijd vooruit:** sluit je een epic af, voeg dan het logische volgende ⏳-doel toe als dat er is.
-- **Een nieuw idee?** Zet het als ⏳ in de roadmap met een regel *waarom* en een *pickup-trigger*
-  (wanneer het de moeite waard wordt). Voor een nieuwe module of een groter epic open je eerst een issue.
+We werken **zoveel mogelijk met GitHub Issues en het project-bord
+[PHK Roadmap](https://github.com/orgs/phk-com/projects/1)**. Zo kunnen ook leden die niet bouwen ideeën en bugs aandragen
+en zien waar we aan werken. Er is **geen aparte roadmap in Markdown**: het bord is de enige bron, zodat niets dubbel
+wordt bijgehouden.
 
----
+### 4.1 Soorten issues
+
+| Soort | Label | Wie | Hoe |
+|---|---|---|---|
+| 💡 **Idee** | `idee` | Iedereen | Formulier *Idee of wens* (geen techniek nodig) |
+| 🐞 **Bug** | `bug` | Iedereen | Formulier *Er werkt iets niet* |
+| 🗺️ **Epic** | `epic` | Bouwers | Titel `E{nr} · {naam}`. De taken zijn **sub-issues** |
+| 🛠️ **Taak** | `taak` | Bouwers | Concreet en afgebakend, met acceptatiecriteria. Een sub-issue van een epic |
+| ⚖️ **Beslissing** | `beslissing` | Iedereen | Er moet een keuze gemaakt worden. De uitkomst komt in het issue en, als het een ontwerpkeuze is, in `docs/ontwerp/` |
+
+Een beveiligingsprobleem meld je **nooit in een openbaar issue**, maar via *Security → Report a vulnerability* (§10).
+Een onderdeel labelen kan met `forum`, `chat`, `games`, `core`, `identity`, `sdk`, `ui`, `docs` of `ci`.
+
+### 4.2 Statussen op het bord
+
+| Status | Betekenis | Wie zet het |
+|---|---|---|
+| 📥 Nieuw | Net binnen, nog niet bekeken | Automatisch |
+| 💡 Idee | Leuk, maar nog geen plan | Een bouwer bij het bekijken |
+| 📋 Backlog | Willen we doen, nog niet ingepland | Een bouwer bij het bekijken |
+| 🎯 Gepland | Volgende in de rij | In overleg (issue of `#bouwen`) |
+| 🔄 Bezig | Iemand werkt eraan: de branch of PR is open | Degene die het oppakt |
+| 👀 In review | De PR wacht op review | Degene die de PR op *Ready* zet |
+| ✅ Klaar | Gemerged en live | Automatisch bij de merge (`Closes #nr`) |
+
+### 4.3 Afspraken
+
+- **Bekijk nieuwe issues:** een bouwer die langskomt, bekijkt issues in 📥 Nieuw. Hij geeft ze een label en een status,
+  en stelt zo nodig een vraag aan de melder, **in gewone taal**. Een idee dat we niet doen, sluiten we vriendelijk en met uitleg.
+- **Oppakken (claimen):** assign jezelf op het issue en zet het op 🔄 Bezig. Zo werken twee leden (of twee agents)
+  niet ongemerkt aan hetzelfde. Staat er al iemand op, overleg dan eerst in het issue.
+- **Elke PR hoort bij een issue.** Zet `Closes #nr` in de beschrijving, zodat het issue sluit en op ✅ komt bij de merge.
+  Een klein ding zonder issue? Maak dan eerst even een issue aan, dan blijft het bord compleet.
+- **Epics** sluiten pas als alle sub-issues dicht zijn. Wie de laatste taak afrondt, sluit ook het epic en zet op het bord
+  het logische volgende epic of de volgende taak op 🎯 Gepland.
+- **Agents** gebruiken `gh`: `gh issue list --label taak --search "no:assignee"` om werk te vinden, `gh issue view`
+  voor de context, en `gh issue edit --add-assignee @me` om te claimen. Een agent pakt nooit een issue op dat al
+  aan iemand anders is toegewezen.
+- **Een issue is openbaar.** Er komen geen persoonsgegevens, privéberichten of screenshots met namen van anderen in.
 
 ## 5. Definition of Done (gedeeld en blokkerend)
 
@@ -173,7 +198,7 @@ beschrijving van de pull request. Een punt dat je overslaat, is zo een zichtbare
 - [ ] Terugdraaien naar de vorige image is veilig. Zo niet, dan staat in de pull request waarom niet en wat het plan is.
 
 **Documentatie** (zie §7)
-- [ ] `docs/ROADMAP.md`: de status is bijgewerkt (🔄 of ✅), met een verwijzing naar de pull request.
+- [ ] Gekoppeld aan een issue (`Closes #nr`), en het issue staat op het bord op 👀 In review.
 - [ ] Ontwerpdocumenten of `docs/agents/`: bijgewerkt als een concept, contract (manifest, SDK, module-API) of rol verandert. Anders n.v.t.
 - [ ] `AGENTS.md`: alleen als er een nieuwe vaste werkregel bij komt. Anders n.v.t.
 - [ ] Screenshot of korte video in de pull request als de UI zichtbaar verandert.
@@ -211,8 +236,7 @@ Elk document heeft een eigen onderwerp, **zonder overlap**:
 |---|---|---|
 | `README.md` | De etalage: wat PHK is, genomen beslissingen, hoe je meedoet | Alleen bij iets groots (een nieuwe module, een gewijzigde beslissing) |
 | `AGENTS.md` | Vaste werkregels (dit bestand) | Alleen als er een werkregel verandert of bijkomt |
-| `docs/ROADMAP.md` | Live plan: open en actief werk | **In elke pull request** die een verhaal oppakt of afrondt |
-| `docs/ROADMAP-archive.md` | Afgeronde epics (je voegt alleen toe) | Als een epic helemaal ✅ is |
+| [Project-bord](https://github.com/orgs/phk-com/projects/1) + issues | Wat er open staat, loopt en klaar is (geen Markdown-roadmap) | Bij oppakken, reviewen en afronden (§4) |
 | `docs/ontwerp/*.md` | Het waarom en hoe: architectuur, beveiliging, onboarding, ontwerp | Als een architectuurkeuze of concept verandert |
 | `docs/agents/*.md` | Bouwgids en contracten voor agents (bron voor `/agents`) | Als een contract, commando of werkwijze voor bouwers verandert |
 
@@ -266,7 +290,7 @@ Zie [docs/ontwerp/beveiliging.md](docs/ontwerp/beveiliging.md). Wat je bij elke 
 
 - Agents antwoorden hun lid in de taal van dat lid (meestal Nederlands).
 - Wees kort en concreet. Een pull request of issue beschrijft wat je deed en waarom, zonder omhaal.
-- Vragen over richting of prioriteit stel je in het issue van het epic of in `#bouwen` in de chat,
+- Vragen over richting of prioriteit stel je in het issue (of het epic) of in `#bouwen` in de chat,
   niet in een zijspoor in een pull request.
 
 ---
