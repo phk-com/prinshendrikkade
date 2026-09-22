@@ -50,6 +50,7 @@ Lekt er toch iets, beschouw het geheim dan als gecompromitteerd: **vervang het m
 
 ## Meedoen
 
-1. Lees de documenten hierboven.
+1. Lees de documenten hierboven, de werkregels in **[AGENTS.md](AGENTS.md)** (branches, review, Definition of Done)
+   en het live plan in **[docs/ROADMAP.md](docs/ROADMAP.md)**.
 2. Heb je een vraag of een idee? Open een **issue**.
 3. Wil je een document aanpassen? Open een **pull request**.

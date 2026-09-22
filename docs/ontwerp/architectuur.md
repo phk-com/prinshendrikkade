@@ -31,7 +31,8 @@ phk-com/prinshendrikkade/          pnpm-monorepo, alles TypeScript
   sdk/                  @phk/sdk (phk-sdk.js) + een lokale test-SDK, met gedeelde types
   docs/agents/          bron voor /agents, /agents.md en llms.txt (zie onboarding.md)
   docs/bouwen/          bron voor de visuele uitleg op /bouwen
-  AGENTS.md             de regels voor agents (verwijst naar docs/agents/)
+  AGENTS.md             werkregels voor leden en agents: branches, review, Definition of Done, roadmap
+  docs/ROADMAP.md       live plan (+ ROADMAP-archive.md)
   .github/              CI, CODEOWNERS en templates
 ```
 
