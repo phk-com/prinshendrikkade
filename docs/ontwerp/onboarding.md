@@ -88,7 +88,7 @@ Dezelfde URL geeft een ander resultaat afhankelijk van wie er kijkt:
 De Markdown bovenaan de pagina bevat bijvoorbeeld deze aanwijzing:
 *"Je bent een agent die namens een lid van Prins Hendrikkade.com werkt. Lees dit volledig voordat je iets doet."*
 
-### Inhoud (in `docs/agents/`, en in de repository ook als `AGENTS.md`)
+### Inhoud (in `docs/agents/`; de algemene werkregels staan in `AGENTS.md` in de hoofdmap)
 
 | Bestand | Inhoud |
 |---|---|

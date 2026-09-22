@@ -50,6 +50,10 @@ Lekt er toch iets, beschouw het geheim dan als gecompromitteerd: **vervang het m
 
 ## Meedoen
 
-1. Lees de documenten hierboven.
-2. Heb je een vraag of een idee? Open een **issue**.
-3. Wil je een document aanpassen? Open een **pull request**.
+1. Lees de documenten hierboven, de werkregels in **[AGENTS.md](AGENTS.md)** (branches, review, Definition of Done)
+   en wat er loopt op het **[project-bord PHK Roadmap](https://github.com/orgs/phk-com/projects/1)**.
+2. **Idee of wens?** Open een [💡 idee](https://github.com/phk-com/prinshendrikkade/issues/new?template=1-idee.yml). Techniek is niet nodig.
+3. **Werkt er iets niet?** Meld een [🐞 bug](https://github.com/phk-com/prinshendrikkade/issues/new?template=2-bug.yml).
+4. **Wil je bouwen?** Pak een taak van het bord (zie `AGENTS.md` §4) en open een **pull request**.
+
+Een beveiligingsprobleem meld je privé via [Report a vulnerability](https://github.com/phk-com/prinshendrikkade/security/advisories/new), niet in een issue.

@@ -1,0 +1,39 @@
+name: 🐞 Er werkt iets niet
+description: Meld een fout of iets vreemds op de site.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bedankt voor het melden! **Let op:** deze pagina is openbaar. Zet er geen wachtwoorden, e-mailadressen
+        of privéberichten in. Gaat het om een beveiligingsprobleem? Meld het dan **niet hier**, maar via
+        *Security → Report a vulnerability*.
+  - type: textarea
+    id: wat
+    attributes:
+      label: Wat ging er mis?
+      placeholder: "Bijv. als ik op 'Versturen' tik in de chat, gebeurt er niets"
+    validations:
+      required: true
+  - type: textarea
+    id: verwacht
+    attributes:
+      label: Wat had je verwacht?
+  - type: textarea
+    id: stappen
+    attributes:
+      label: Hoe kunnen we het zelf zien gebeuren? (optioneel)
+      placeholder: |
+        1. Ga naar ...
+        2. Tik op ...
+  - type: dropdown
+    id: apparaat
+    attributes:
+      label: Waarop gebruikte je de site?
+      options: ["Telefoon (iPhone)", "Telefoon (Android)", "Tablet", "Computer", "Weet ik niet"]
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot (optioneel)
+      description: Sleep hem hierheen. Maak eerst namen of berichten van anderen onleesbaar.

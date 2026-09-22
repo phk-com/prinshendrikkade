@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📋 Waar werken we aan? (project-bord)
+    url: https://github.com/orgs/phk-com/projects/1
+    about: Bekijk wat er gepland is, wat er loopt en wat er klaar is.
+  - name: 🔒 Beveiligingsprobleem melden
+    url: https://github.com/phk-com/prinshendrikkade/security/advisories/new
+    about: Meld kwetsbaarheden privé, niet in een openbaar issue.
