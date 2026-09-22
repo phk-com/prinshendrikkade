@@ -23,6 +23,7 @@
 | [Architectuur](docs/ontwerp/architectuur.md) | De twee niveaus (apps en modules), het manifest, de SDK, highscores, CI, uitrollen en terugdraaien, en de hosting |
 | [Beveiliging](docs/ontwerp/beveiliging.md) | Welke data we bewaren, het dreigingsmodel, inloggen, autorisatie, geheimen, de AVG |
 | [Onboarding](docs/ontwerp/onboarding.md) | De uitnodigingsflow voor leden, `/agents` voor AI-agents en `/bouwen` als visuele uitleg |
+| [Schermen](docs/ontwerp/schermen.md) | Screenshots van het design system en alle schermen (Claude Design) |
 | [Design brief](docs/ontwerp/design-brief.md) | De opdracht voor het visuele ontwerp (richting "Portaal", logo "Zegel") |
 
 ## Genomen beslissingen
