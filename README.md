@@ -39,6 +39,13 @@
 - Welke hosting kiezen we definitief, en wie beheert de server?
 - Komt er een externe pentest vóór livegang?
 
+## Geen geheimen in deze repository
+
+Deze repository is (of wordt) **openbaar**. Zet er dus nooit wachtwoorden, API-sleutels, tokens, `.env`-bestanden,
+databasedumps of persoonsgegevens in. Productiegeheimen staan alleen op de server.
+Bij elke push en pull request controleert [gitleaks](.github/workflows/secrets.yml) de volledige historie.
+Lekt er toch iets, beschouw het geheim dan als gecompromitteerd: **vervang het meteen**. Alleen verwijderen is niet genoeg.
+
 ## Meedoen
 
 1. Lees de documenten hierboven.
