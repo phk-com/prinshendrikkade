@@ -146,9 +146,17 @@ de groep telt alleen mee bij deze paden.
 
 ## 7. Server, opslag en back-ups
 
-- **Hosting:** Hetzner in Duitsland of Finland (of TransIP in Nederland), met een **verwerkersovereenkomst** (DPA).
-- **Server:** alleen inloggen met SSH-sleutels, geen root-login, een firewall die alleen poort 80, 443 en 22 openlaat
-  (en 22 bij voorkeur alleen via een VPN of Tailscale), automatische beveiligingsupdates en fail2ban.
+- **Hosting fase 1:** op de NAS van wous2house, in Nederland (zie `architectuur.md` → Hosting). Omdat wous2house de server
+  beheert, heeft hij technisch toegang tot de productiedata. Daarom:
+  - wous2house zit in `@phk-com/security` en is de **vaste beheerder**; de tweede beheerder (voor noodgevallen) is Mark;
+  - de VM staat **los van de privédata en het thuisnetwerk** (een eigen VM in een apart netwerksegment), zonder gedeelde mappen met de NAS;
+  - de versleutelingssleutels (voor e-mailadressen, DM's en back-ups) staan niet op de NAS-schijf buiten de VM, en de sleutel van de back-ups ligt bij twee leden;
+  - de schijf van de VM is versleuteld, zodat een gestolen NAS of een NAS-schijf die wordt weggegooid geen leesbare ledendata bevat;
+  - de AVG-rol is duidelijk: de beheerders van de site zijn samen verantwoordelijk, en er is geen externe hostingpartij en dus geen verwerkersovereenkomst nodig.
+- **Hosting fase 2** (als we verhuizen): Hetzner of TransIP, met een **verwerkersovereenkomst** (DPA).
+- **Server:** alleen inloggen met SSH-sleutels, geen root-login, automatische beveiligingsupdates en fail2ban.
+  **Geen inkomende poorten op de thuisrouter:** het webverkeer komt binnen via een uitgaande WireGuard-tunnel naar een reverse proxy in de EU,
+  en beheer loopt via een VPN (WireGuard of Tailscale).
 - De database luistert alleen intern en draait onder een eigen gebruiker met minimale rechten.
 - **Back-ups:** dagelijks met restic, **versleuteld**, naar opslag in de EU, 30 dagen bewaard.
   De sleutel wordt apart bewaard (bij 2 leden). Elk kwartaal wordt getest of terugzetten werkt.

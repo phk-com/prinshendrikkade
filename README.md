@@ -34,12 +34,12 @@
 - Geen oude data: geen accounts, berichten, forumposts of games van de oude site.
 - Pentest door een sterk AI-model zodra het platform grotendeels staat (#25).
 - Beveiligingsreview door [`@phk-com/security`](https://github.com/orgs/phk-com/teams/security): markclausing, RobertTeunissen en wous2house.
-- Hosting bij een Europese partij (voorstel: een VPS bij Hetzner met Coolify).
+- Hosting: eerst op de **NAS van wous2house** (in een eigen VM, met Coolify, achter een tunnel). Later eventueel een VPS in de EU.
 - Techniek: **TypeScript** overal, met **SvelteKit**, **PostgreSQL** (Drizzle), **Better Auth** (passkeys) en een pnpm-monorepo waarin elke module een eigen package is.
 
 ## Nog open
 
-- Welke hosting kiezen we definitief, en wie beheert de server?
+Alle beslissingen uit de ontwerpfase zijn genomen. Wat er nu loopt, staat op het [project-bord](https://github.com/orgs/phk-com/projects/1).
 
 ## Geen geheimen in deze repository
 

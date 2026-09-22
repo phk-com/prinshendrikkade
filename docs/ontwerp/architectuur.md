@@ -214,29 +214,41 @@ merge naar main ──► CI ──► container-image  phk:<sha> ──► data
 
 ---
 
-## Hosting (Europees)
+## Hosting
 
-Dit platform heeft meer nodig dan shared hosting: containers, previews per pull request, een langlopend Node-proces voor de chat,
-achtergrondtaken en een apart domein voor apps. Het advies is **één VPS bij een Europese partij, met een
-open-source deploylaag erop**:
+### Fase 1 (nu): op de NAS van wous2house
 
-| Onderdeel | Voorstel | Waarom |
+Besloten in #4: de eerste hosting draait **op de NAS van wous2house**, bij hem thuis in Nederland. Dat kost niets extra
+en past bij de omvang van de groep. Omdat alles in Docker-images draait, is verhuizen naar een VPS (fase 2) later
+een kwestie van Coolify op een nieuwe server zetten en de database terugzetten.
+
+| Onderdeel | Aanpak | Waarom |
 |---|---|---|
-| Server | **Hetzner Cloud** (Duitsland/Finland), VPS met 4 GB RAM | Goedkoop, betrouwbaar, EU-bedrijf. Nederlandse alternatieven: **TransIP** VPS of **Hostnet** |
-| Deploys | **Coolify** (open source, draait op de eigen VPS) | Koppelt met GitHub, maakt preview-omgevingen per pull request, geeft terugdraaien per image, regelt SSL en heeft een webinterface |
-| Database | PostgreSQL op dezelfde VPS | Eenvoudig; back-ups via Coolify |
-| Back-ups | Hetzner Storage Box of S3-compatibele EU-opslag | Buiten de server en binnen de EU |
-| Chat realtime | Server-Sent Events vanuit de app zelf, met Postgres `LISTEN/NOTIFY` | Geen extra server en geen externe (Amerikaanse) dienst nodig |
-| DNS/domein | Bij de huidige registrar, of TransIP | `prinshendrikkade.com`, `apps.`, `*.test.` |
+| Afscherming van de NAS | **Een eigen VM** (Debian) op de NAS, of anders een aparte Docker-host, in een **apart netwerksegment** (VLAN/DMZ) | De site mag nooit bij de privébestanden van wous2house of bij zijn thuisnetwerk kunnen, en andersom |
+| Deploys | **Coolify** in die VM | Hetzelfde als in het oorspronkelijke plan: previews per PR, terugdraaien per image, SSL |
+| Bereikbaarheid | **Geen open poorten op de thuisrouter.** Het verkeer komt binnen via een **uitgaande tunnel** (WireGuard) naar een kleine reverse proxy in de EU, bijvoorbeeld een minimale VPS of Pangolin | Het thuis-IP-adres blijft verborgen, er zijn geen inkomende aanvallen op het thuisnetwerk, en een dynamisch IP-adres is geen probleem |
+| Database | PostgreSQL in de VM, alleen intern bereikbaar | Blijft ongewijzigd |
+| Back-ups | Dagelijks, versleuteld (restic), **buiten de NAS**: naar EU-opslag en/of een tweede locatie | Een NAS is geen back-up van zichzelf (brand, diefstal, ransomware) |
+| Chat realtime | Server-Sent Events vanuit de app zelf | Blijft ongewijzigd |
+| DNS/domein | `prinshendrikkade.com`, `apps.`, `*.test.` wijzen naar de reverse proxy | Het thuisadres komt nergens in DNS |
 
-Kosten: naar verwachting **zo'n €5–15 per maand** voor de VPS en de back-ups. De actuele prijzen moeten nog worden gecontroleerd.
+**Wat we van de NAS moeten weten** (staat in #11): merk en model, processor (x86 of ARM), het geheugen dat vrij is voor een VM
+(minstens 4 GB), of hij VM's kan draaien, de uploadsnelheid van de internetverbinding, en hoe het staat met stroomuitval en updates.
 
+**Beperkingen die we accepteren:** de beschikbaarheid hangt af van de stroom, de internetverbinding en het onderhoud thuis,
+en het aantal preview-omgevingen is beperkt door het geheugen. Dat is prima voor een besloten groep. Groeit het, dan gaan we naar fase 2.
+
+### Fase 2 (later, als dat nodig is): een VPS in de EU
+
+Het oorspronkelijke plan: een **Hetzner Cloud**-VPS (Duitsland/Finland, of TransIP in Nederland) met Coolify en EU-back-upopslag,
+voor naar verwachting zo'n €5–15 per maand. **Wanneer we verhuizen:** als de NAS de previews of de chat niet meer bijhoudt,
+als de beschikbaarheid te vaak een probleem is, of als wous2house de NAS ergens anders voor nodig heeft.
 
 ---
 
 ## Bouwvolgorde
 
-1. **Fundament:** de repo-structuur, `AGENTS.md`, CI, branch protection, Coolify op een VPS en een preview- en rollback-flow die werkt.
+1. **Fundament:** de repo-structuur, `AGENTS.md`, CI, branch protection, Coolify op de NAS (fase 1) en een preview- en rollback-flow die werkt.
 2. **Kern:** accounts en uitnodigingen, het module-contract, module-beheer en het auditlog, en het design system als Svelte-componenten (`@phk/ui`) met CSS-tokens.
 3. **Forum-module.**
 4. **Appplatform:** het manifest-schema, de afgeschermde weergave, de SDK, speelsessies, highscores en de CI-speeltest.
