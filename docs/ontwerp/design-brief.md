@@ -57,5 +57,5 @@ Op desktop is dat een zijbalk.
 - Toegankelijkheid: contrast volgens AA, aanraakdoelen van minimaal 44px en duidelijke focus-states.
 
 ## Techniek (ter info voor de ontwerper)
-De site wordt gebouwd met server-rendered HTML en lichte interactiviteit, gehost op een eigen server (VPS) in de EU.
+De site wordt gebouwd met SvelteKit (TypeScript): server-rendered HTML met lichte interactiviteit, gehost op een eigen server (VPS) in de EU. Het design system wordt Svelte-componenten met CSS-variabelen.
 Er zijn geen zware SPA-animaties nodig. CSS-transities en design tokens (CSS-variabelen) zijn prima.

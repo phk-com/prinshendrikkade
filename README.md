@@ -33,6 +33,7 @@
 - Samenwerken en publiceren via GitHub (`phk-com`). `/bouwen` en `/agents` zijn bereikbaar maar `noindex`.
 - Geen oude data: geen accounts, berichten, forumposts of games van de oude site.
 - Hosting bij een Europese partij (voorstel: een VPS bij Hetzner met Coolify).
+- Techniek: **TypeScript** overal, met **SvelteKit**, **PostgreSQL** (Drizzle), **Better Auth** (passkeys) en een pnpm-monorepo waarin elke module een eigen package is.
 
 ## Nog open
 

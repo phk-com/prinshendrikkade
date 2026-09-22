@@ -22,7 +22,7 @@ Het hoort bij `architectuur.md`.
 | Gebruikersnaam / weergavenaam | Ja | Gewoon (is zichtbaar voor leden) |
 | E-mailadres | Ja (uitnodiging, herstel, meldingen) | **Versleuteld** in de database, plus een hash om op te zoeken. Nooit zichtbaar voor andere leden of voor modules en apps |
 | Passkeys (publieke sleutels) | Ja | Gewoon; alleen de publieke sleutel, dus waardeloos voor een aanvaller |
-| Wachtwoord | Alleen als iemand geen passkey kan gebruiken | Argon2id-hash |
+| Wachtwoord | Alleen als iemand geen passkey kan gebruiken | Argon2id-hash (via Better Auth) |
 | TOTP-geheim en herstelcodes | Bij 2FA | Versleuteld / gehasht |
 | Avatar, bio | Optioneel | Gewoon |
 | Directe berichten (DM's) | Ja (chat) | Versleuteld opgeslagen. Er is **geen** beheerscherm waarin iemand DM's van anderen kan lezen |
@@ -51,7 +51,7 @@ en geen games of scores. Iedereen begint opnieuw, via een uitnodiging.
 | D2 | **Een pull request die data weglekt** (kwaadaardig, gehackt account, of een agent die "creatief" is) | Iedereen kan code voorstellen en goedkeuren | Modules kunnen structureel niet bij gevoelige data (§5), strengere review voor beveiligingscode, geen productiegeheimen in CI |
 | D3 | **Een kwaadaardige of lekke app/game** | Iedereen kan games publiceren | Afgeschermd frame op een eigen domein; de SDK geeft alleen een pseudoniem en een weergavenaam |
 | D4 | **Gelekte back-ups of dumps** | Back-ups worden vaak vergeten | Back-ups versleuteld, sleutel apart bewaard; geen productiedata in testomgevingen |
-| D5 | **Kwetsbare afhankelijkheden** (supply chain) | Vibecoding trekt makkelijk willekeurige packages binnen | Lockfiles, `composer audit` en `npm audit` in CI, Dependabot, een review-eis voor nieuwe packages |
+| D5 | **Kwetsbare afhankelijkheden** (supply chain) | Vibecoding trekt makkelijk willekeurige packages binnen | `pnpm-lock.yaml`, `pnpm audit` in CI, Dependabot, een review-eis voor nieuwe packages |
 | D6 | **Serverovername** | Eén VPS | Een geharde server, alleen SSH met sleutels, automatische updates, firewall, geen databasepoort open naar buiten |
 | D7 | **Misbruik door een lid** (nieuwsgierigheid) | Een vriendengroep met onderlinge verhoudingen | Er is geen scherm dat ledendata of DM's laat zien; export van data gaat alleen via het vier-ogen-principe; alles komt in het auditlog |
 
@@ -112,18 +112,19 @@ Er zijn drie soorten acties:
 
 Dit is de belangrijkste maatregel tegen D2, en hij wordt afgedwongen met architectuurtests in CI:
 
-- De `users`-tabel en de tabellen voor inloggen zijn alleen bereikbaar vanuit `core/Identity`.
-- Modules krijgen leden alleen via het contract `Members`. Dat geeft een `MemberView` terug met
+- De tabellen voor leden en inloggen (van Better Auth) zitten in het package `@phk/identity`. Alleen de kern mag dat package importeren.
+- Modules krijgen leden alleen via `@phk/core-api`. Dat geeft een `MemberView` terug met
   `id`, `weergavenaam`, `avatar` en `online`, en **nooit** een e-mailadres, IP-adres of inloggegevens.
-- Een architectuurtest laat CI falen als een module `User`, `DB::table('users')` of de onderdelen
-  voor versleuteling en inloggen gebruikt.
-- **Elke route moet** de middleware `auth` hebben en een policy. Een test gaat alle routes langs en faalt als er een ontbreekt.
+- **dependency-cruiser** laat CI falen als een module `@phk/identity`, het databaseschema van de kern of de
+  onderdelen voor versleuteling importeert. Modules krijgen een database-handle die alleen hun eigen tabellen (prefix) kan raken.
+- **Elke route moet** via een centrale `guard()` lopen, die inloggen en de juiste rechten controleert. Een test gaat alle
+  SvelteKit-routes (pagina's, `+server.ts` en form actions) langs en faalt als er een ontbreekt.
 - Apps en games krijgen via de SDK alleen een **pseudoniem per app** en de weergavenaam. Een game kan
   spelers dus niet over verschillende apps heen volgen.
 
 ### Strengere review voor beveiligingscode
 
-`core/Identity`, `core/Security`, `docs/agents/` en `AGENTS.md` (want die sturen wat agents doen), de CI-configuratie, de deployconfiguratie en `composer.json` of `package.json`
+`core/identity/`, `core/core-api/`, `docs/agents/` en `AGENTS.md` (want die sturen wat agents doen), de CI-configuratie, de deployconfiguratie en elke `package.json` of `pnpm-lock.yaml`
 (nieuwe packages) hebben **2 goedkeuringen** nodig, waarvan minstens één van een lid uit de groep
 `@phk-com/security`. Dat is een kleine groep vrijwilligers van 2 à 3 leden. Iedereen blijft beheerder;
 de groep telt alleen mee bij deze paden.
@@ -161,7 +162,7 @@ de groep telt alleen mee bij deze paden.
 
 | Wanneer | Wat |
 |---|---|
-| Elke pull request | Autorisatietests voor alle routes, architectuurtests (§5), tests die proberen bij data van een ander lid te komen, gitleaks, `composer audit` en `npm audit`, Larastan |
+| Elke pull request | Autorisatietests voor alle routes, architectuurtests (§5), tests die proberen bij data van een ander lid te komen, gitleaks, `pnpm audit`, TypeScript strict en `svelte-check` |
 | Elke preview | Een baseline-scan met **OWASP ZAP** op de preview-URL |
 | Wekelijks | Dependabot-updates en een controle van de beveiligingsheaders |
 | Vóór livegang | Een review tegen de **OWASP ASVS** niveau 2 voor authenticatie, sessies en toegangscontrole; eventueel een externe pentest van een dag |

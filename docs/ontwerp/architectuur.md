@@ -17,13 +17,18 @@
 ## Eén repository
 
 ```
-phk-com/prinshendrikkade/
-  core/                 Laravel-kern: accounts, module-contract, SDK-bridge, API
-  modules/              niveau 2: PHP-modules (Chat, Forum, Games, Leden, …)
-    Forum/module.json
+phk-com/prinshendrikkade/          pnpm-monorepo, alles TypeScript
+  core/
+    web/                SvelteKit-app: layout, navigatie, dashboard, module-beheer, API
+    identity/           @phk/identity: accounts, passkeys, sessies (alleen voor de kern)
+    core-api/           @phk/core-api: de enige publieke API voor modules (MemberView, audit, settings)
+    db/                 Drizzle-schema en migraties van de kern
+    ui/                 @phk/ui: design system als Svelte-componenten + CSS-tokens
+  modules/              niveau 2: modules als eigen packages (Chat, Forum, Games, Leden, …)
+    forum/package.json
   apps/                 niveau 1: afgeschermde apps en games (HTML/JS)
     smack-the-penguin/phk-app.json
-  sdk/                  phk-sdk.js + een lokale test-SDK
+  sdk/                  @phk/sdk (phk-sdk.js) + een lokale test-SDK, met gedeelde types
   docs/agents/          bron voor /agents, /agents.md en llms.txt (zie onboarding.md)
   docs/bouwen/          bron voor de visuele uitleg op /bouwen
   AGENTS.md             de regels voor agents (verwijst naar docs/agents/)
@@ -33,13 +38,27 @@ phk-com/prinshendrikkade/
 Alles zit in één repository. Eén pull request kan daardoor een game, een module en de documentatie tegelijk
 aanpassen, en dat wordt dan ook samen getest en samen teruggedraaid.
 
+## Technologie
+
+| Laag | Keuze | Waarom |
+|---|---|---|
+| Taal | **TypeScript** (strict), overal | Eén taal voor de server, de UI, de SDK en de games. Agents schrijven het het best. De types voor manifest, SDK en API worden gedeeld, dus fouten vindt de compiler al |
+| Framework | **SvelteKit** (Node-adapter) | Server-rendered, weinig JavaScript, snel op een telefoon, en eenvoudiger dan Next.js (geen server components of cache-magie) |
+| Database | **PostgreSQL** + **Drizzle ORM** | Een schema als TypeScript, getypte queries en SQL-migraties |
+| Validatie | **zod** | Manifest-schema, module-instellingen en API-invoer. Het JSON Schema voor `phk-app.json` wordt hieruit gegenereerd |
+| Inloggen | **Better Auth** (self-hosted), met plugins voor passkeys en 2FA | Passkeys, TOTP, herstelcodes, sessies en rate limiting in de eigen database, zonder externe dienst |
+| Realtime | **Server-Sent Events** + Postgres `LISTEN/NOTIFY` | Chat en "is aan het typen" zonder aparte websocket-server of externe dienst |
+| Monorepo | **pnpm workspaces** | Elke module en de SDK is een eigen package met eigen afhankelijkheden, zodat grenzen hard af te dwingen zijn |
+| Kwaliteit | Vitest, Playwright, ESLint, `svelte-check`, **dependency-cruiser**, gitleaks, `pnpm audit` | Tests, architectuurregels, typecontrole en beveiligingsscans |
+| Runtime | Node.js (LTS) in een Docker-image | Draait via Coolify op de eigen VPS |
+
 ## Twee niveaus
 
 Het verschil tussen de niveaus zit in wat een uitbreiding mag. De weg naar live is voor beide hetzelfde.
 
 | | **Niveau 1: Apps** (games, widgets, kleine tools) | **Niveau 2: Modules** (chat, forum, games-platform) |
 |---|---|---|
-| Wat | HTML/JS/CSS in een afgeschermd frame op een apart domein | PHP-code die in de server draait |
+| Wat | HTML/JS/CSS in een afgeschermd frame op een apart domein | TypeScript-code (een eigen package) die in de server draait |
 | Toegang | Alleen via de PHK-SDK en alleen de rechten die in het manifest staan | Volledig, via het module-contract |
 | Review nodig | 1 ander lid | 2 andere leden (of 1 als het alleen de eigen module betreft) |
 | Extra CI | Validatie van manifest en bundel, en een headless speeltest | Tests, architectuurregels, statische analyse en migratietests |
@@ -105,25 +124,48 @@ const top = await phk.scores.top({ leaderboard: "distance", limit: 10 });
 ## Niveau 2: modules
 
 ```
-modules/Forum/
-  module.json            naam, versie, afhankelijkheden, instellingen-schema, rechten
-  src/ForumModule.php    implementeert PHK\Contracts\Module
-  routes/  database/migrations/  resources/views/  tests/
+modules/forum/
+  package.json           @phk/forum; mag alleen @phk/core-api en @phk/ui als kern-afhankelijkheid hebben
+  src/module.ts          de moduledefinitie (zie hieronder)
+  src/routes/            SvelteKit-routes van de module
+  src/widgets/           dashboardblokken (Svelte-componenten)
+  src/db/                Drizzle-schema en migraties van de module (eigen tabelprefix, bijv. forum_)
+  tests/
 ```
 
-Het contract `Module` vraagt om: `register()`, `navigation()`, `widgets()`, `settingsSchema()`,
-`install()`, `uninstall()` en `healthCheck()`.
+Een module is een gewone TypeScript-definitie:
+
+```ts
+import { defineModule } from "@phk/core-api";
+import { z } from "zod";
+
+export default defineModule({
+  id: "forum",
+  version: "1.0.0",
+  navigation: { label: "Forum", icon: "messages" },
+  permissions: ["members:read"],
+  settings: z.object({ postsPerPage: z.number().int().min(10).max(100).default(25) }),
+  widgets: [latestPosts],
+  migrations: "./src/db/migrations",
+  healthCheck: async (ctx) => ctx.db.execute(sql`select 1`),
+});
+```
+
+Het instellingenformulier in module-beheer wordt automatisch gemaakt uit het `settings`-schema.
+Een module krijgt een `ctx` met alleen wat bij zijn `permissions` hoort. Leden komen daarin altijd
+als `MemberView` (id, weergavenaam, avatar, online) en nooit met een e-mailadres of inloggegevens.
 
 In de site (scherm 3f uit het ontwerp) kan ieder lid modules **aan- en uitzetten en instellen**. Dat zijn
 instellingen, geen code, en elke wijziging komt in het auditlog. **Toevoegen of verwijderen** van een module
 gaat altijd via een pull request.
 
 **Controles in CI:**
-- Pest-tests per module, plus **contracttests die automatisch voor elke module draaien**:
-  installeren, deïnstalleren, heen en terug migreren, health-check, en elk dashboardblok moet kunnen renderen.
-- **Architectuurregels** (Pest Arch): een module mag alleen de publieke kern-API gebruiken en niet in de
-  interne code van andere modules grijpen, en debugcode mag er niet in staan.
-- Larastan (statische analyse), Pint (codestijl) en `composer audit` (bekende kwetsbaarheden).
+- Vitest-tests per module, plus **contracttests die automatisch voor elke module draaien**:
+  de definitie is geldig, de migraties draaien op een lege database en op de vorige release, de health-check slaagt,
+  en elk dashboardblok kan renderen.
+- **Architectuurregels** (dependency-cruiser, ESLint): een module importeert alleen `@phk/core-api` en `@phk/ui`,
+  nooit `@phk/identity`, de database van de kern of andere modules. Een module raakt alleen tabellen met zijn eigen prefix.
+- TypeScript strict en `svelte-check` (typecontrole), ESLint en Prettier (codestijl), `pnpm audit` (bekende kwetsbaarheden).
 - Een smoketest met Playwright op de belangrijkste pagina's, op telefoon- en desktopformaat.
 
 ---
@@ -146,7 +188,7 @@ en `/agents` op de site toont dezelfde inhoud (zie `onboarding.md`).
 
 ### Voor agents en vibecoders
 - `AGENTS.md` in de repo: de structuur, het manifest, de SDK, de regels en hoe je lokaal test.
-- `make new-game name=snake` maakt een app-skelet aan, en `make dev` start een lokale server met de test-SDK.
+- `pnpm new:game snake` maakt een app-skelet aan, `pnpm new:module agenda` een module-skelet, en `pnpm dev` start de site lokaal met de test-SDK en een lokale Postgres (Docker).
 - `/agents` (één URL voor agents), `/llms.txt` en `/bouwen` (visueel): gegenereerd uit `docs/`, zie `onboarding.md`.
 - `/api/v1/openapi.json`: de runtime-API (scores, sessies, opslag), bijvoorbeeld voor bots of statistieken.
 - Een Claude Code-skill `phk-publish` in de repo die de hele flow kent, van skelet tot pull request.
@@ -161,9 +203,12 @@ merge naar main ──► CI ──► container-image  phk:<sha> ──► data
       ──► nieuwe versie live ──► health-check ──fout──► automatisch terug naar de vorige image
 ```
 
-- Elke build is een **container-image met de git-SHA** als tag. Terugdraaien is de vorige image starten,
-  plus `migrate:rollback` als dat nodig is.
-- Migraties moeten **terugdraaibaar** zijn. CI test `migrate` → `rollback` → `migrate` voor elke pull request.
+- Elke build is een **container-image met de git-SHA** als tag. Terugdraaien is **alleen de vorige image starten**.
+- Daarom zijn migraties altijd **achterwaarts compatibel** (expand/contract): eerst kolommen of tabellen toevoegen,
+  en pas in een latere release iets weghalen of hernoemen. De vorige release blijft dus werken op het nieuwe schema,
+  en er zijn nooit riskante down-migraties op productiedata nodig.
+- CI controleert dat: de testsuite van de **vorige release** draait tegen het **nieuwe schema**, en een migratie die
+  een kolom of tabel verwijdert of hernoemt, mag alleen als die al een release lang niet meer gebruikt wordt.
 - Daarnaast is een `git revert` op `main` altijd mogelijk. Dat rolt gewoon uit als een nieuwe versie.
 - Dagelijkse back-ups van de database en de uploads naar opslag buiten de server (in de EU).
 
@@ -171,7 +216,7 @@ merge naar main ──► CI ──► container-image  phk:<sha> ──► data
 
 ## Hosting (Europees)
 
-Dit platform heeft meer nodig dan shared hosting: containers, previews per pull request, websockets voor de chat,
+Dit platform heeft meer nodig dan shared hosting: containers, previews per pull request, een langlopend Node-proces voor de chat,
 achtergrondtaken en een apart domein voor apps. Het advies is **één VPS bij een Europese partij, met een
 open-source deploylaag erop**:
 
@@ -179,25 +224,22 @@ open-source deploylaag erop**:
 |---|---|---|
 | Server | **Hetzner Cloud** (Duitsland/Finland), VPS met 4 GB RAM | Goedkoop, betrouwbaar, EU-bedrijf. Nederlandse alternatieven: **TransIP** VPS of **Hostnet** |
 | Deploys | **Coolify** (open source, draait op de eigen VPS) | Koppelt met GitHub, maakt preview-omgevingen per pull request, geeft terugdraaien per image, regelt SSL en heeft een webinterface |
-| Database | MySQL/MariaDB of PostgreSQL op dezelfde VPS | Eenvoudig; back-ups via Coolify |
+| Database | PostgreSQL op dezelfde VPS | Eenvoudig; back-ups via Coolify |
 | Back-ups | Hetzner Storage Box of S3-compatibele EU-opslag | Buiten de server en binnen de EU |
-| Chat realtime | Laravel Reverb (websockets) op dezelfde VPS | Geen externe (Amerikaanse) dienst nodig |
+| Chat realtime | Server-Sent Events vanuit de app zelf, met Postgres `LISTEN/NOTIFY` | Geen extra server en geen externe (Amerikaanse) dienst nodig |
 | DNS/domein | Bij de huidige registrar, of TransIP | `prinshendrikkade.com`, `apps.`, `*.test.` |
 
 Kosten: naar verwachting **zo'n €5–15 per maand** voor de VPS en de back-ups. De actuele prijzen moeten nog worden gecontroleerd.
 
-Er is een eenvoudiger alternatief als je geen server wilt beheren: **Ploi** (een Nederlands bedrijf) als beheerlaag
-op een Hetzner- of TransIP-server. Dat geeft zero-downtime deploys en terugdraaien, maar minder goede previews
-per pull request.
 
 ---
 
 ## Bouwvolgorde
 
 1. **Fundament:** de repo-structuur, `AGENTS.md`, CI, branch protection, Coolify op een VPS en een preview- en rollback-flow die werkt.
-2. **Kern:** accounts en uitnodigingen, het module-contract, module-beheer en het auditlog, en het design system als Blade-componenten.
+2. **Kern:** accounts en uitnodigingen, het module-contract, module-beheer en het auditlog, en het design system als Svelte-componenten (`@phk/ui`) met CSS-tokens.
 3. **Forum-module.**
 4. **Appplatform:** het manifest-schema, de afgeschermde weergave, de SDK, speelsessies, highscores en de CI-speeltest.
 5. **Games-module:** de arcade en lobby, en een voorbeeldgame als sjabloon.
-6. **Chat-module** met Reverb.
+6. **Chat-module** met Server-Sent Events.
 7. **Onboarding:** de uitnodigingsflow, `/agents`, `/bouwen`, `llms.txt`, OpenAPI en de `phk-publish`-skill (zie `onboarding.md`).
