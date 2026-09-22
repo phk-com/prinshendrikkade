@@ -1,0 +1,13 @@
+# Nooit databasedumps, back-ups of geheimen in de repository (zie docs/ontwerp/beveiliging.md)
+*.sql
+*.sql.gz
+*.dump
+backup*
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
