@@ -32,12 +32,12 @@
 - Lid worden alleen via een expliciete uitnodiging. Onbeperkt aantal uitnodigingen per lid, en een afkoelperiode van 7 dagen.
 - Samenwerken en publiceren via GitHub (`phk-com`). `/bouwen` en `/agents` zijn bereikbaar maar `noindex`.
 - Geen oude data: geen accounts, berichten, forumposts of games van de oude site.
+- Beveiligingsreview door [`@phk-com/security`](https://github.com/orgs/phk-com/teams/security): markclausing, RobertTeunissen en wous2house.
 - Hosting bij een Europese partij (voorstel: een VPS bij Hetzner met Coolify).
 - Techniek: **TypeScript** overal, met **SvelteKit**, **PostgreSQL** (Drizzle), **Better Auth** (passkeys) en een pnpm-monorepo waarin elke module een eigen package is.
 
 ## Nog open
 
-- Wie komen er in `@phk-com/security` (de review van beveiligingscode)?
 - Welke hosting kiezen we definitief, en wie beheert de server?
 - Komt er een externe pentest vóór livegang?
 

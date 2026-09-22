@@ -126,7 +126,7 @@ Dit is de belangrijkste maatregel tegen D2, en hij wordt afgedwongen met archite
 
 `core/identity/`, `core/core-api/`, `docs/agents/` en `AGENTS.md` (want die sturen wat agents doen), de CI-configuratie, de deployconfiguratie en elke `package.json` of `pnpm-lock.yaml`
 (nieuwe packages) hebben **2 goedkeuringen** nodig, waarvan minstens één van een lid uit de groep
-`@phk-com/security`. Dat is een kleine groep vrijwilligers van 2 à 3 leden. Iedereen blijft beheerder;
+`@phk-com/security`: **markclausing, RobertTeunissen en wous2house** (besloten in #3). Iedereen blijft beheerder;
 de groep telt alleen mee bij deze paden.
 
 ---
@@ -189,6 +189,6 @@ de groep telt alleen mee bij deze paden.
 1. **Passkeys als standaard**, met een wachtwoord plus verplichte 2FA als alternatief? *(advies: ja)*
 2. **Herstel via twee andere leden** in plaats van een e-maillink? *(advies: ja)*
 3. **Het vier-ogen-principe voor gevoelige acties** (§5)? *(advies: ja)*
-4. **Een groep `@phk-com/security`** van 2 à 3 leden voor de review van beveiligingscode? Wie zitten erin?
+4. ~~Een groep `@phk-com/security`?~~ **Besloten (#3):** markclausing, RobertTeunissen en wous2house.
 5. **De oude dump en de oude sitebestanden:** verwijderen, of versleuteld offline archiveren?
 6. **Een externe pentest vóór livegang:** wel of niet? *(ongeveer een dag werk, optioneel)*
